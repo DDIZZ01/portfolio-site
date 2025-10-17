@@ -1,9 +1,8 @@
-l<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <p>Visitor Count: <span id="visitor-count">Loading...</span></p>
   <title>Dorian A. Diaz | Cloud Engineer Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -36,15 +35,14 @@ l<!doctype html>
     <section id="home" class="card">
       <h2>About me</h2>
       <p>
-        I’m a disciplined cloud engineer in training with a 4.0 GPA at ECPI University, blending
-        military precision with hands-on AWS skills. I’ve led high-performing teams and delivered
-        mission-critical outcomes, and I now focus on scalable cloud architectures, containerization,
-        and AI/LLM workflows. I enjoy building reliable systems, documenting rigorously, and
-        collaborating with cross-functional teams under pressure.
+        Systems Administrator with 5 years of experience in optimizing and securing IT infrastructures. 
+        Adept at leveraging skills in Active Directory, EC2, and PowerShell to enhance system performance and reliability. 
+        Committed to innovative solutions and continuous learning, with a proven track record in both military and civilian contexts, 
+        driving mission-critical outcomes and seamless operations.
       </p>
       <ul class="highlights">
         <li><strong>Focus:</strong> AWS, Docker, Kubernetes, CI/CD, security, reproducible workflows</li>
-        <li><strong>Current:</strong> DOD SkillBridge AI/ML Engineer, BCS Allegient</li>
+        <li><strong>Current:</strong> DOD SkillBridge AI/ML Engineer (Junior), BCS Allegient</li>
         <li><strong>Clearance:</strong> Active Secret</li>
       </ul>
     </section>
@@ -67,13 +65,21 @@ l<!doctype html>
       </object>
     </section>
 
-
     <!-- Projects -->
-<section id="projects" class="card" style="text-align:center; padding:3rem 1rem;">
-  <h2 style="font-size:2rem; margin-bottom:0.5rem;">🚧 Under Construction 🚧</h2>
-  <p style="font-size:1.1rem; opacity:0.85;">👷‍♂️🛠️ Check back soon for updates! 🏗️</p>
-</section>
+    <section id="projects" class="card">
+      <h2>Projects</h2>
+      <article class="project">
+        <h3>Cloud Portfolio Project: Serverless Static Website with Visitor Counter</h3>
+        <p>
+          Full-stack, serverless web app on AWS: static frontend on S3 behind CloudFront + Route 53 & ACM,
+          visitor counter via API Gateway → Lambda → DynamoDB, secured with IAM & OAC, monitored with CloudWatch,
+          and deployed using GitHub Actions.
+        </p>
+        <a class="btn" href="project-visitor-counter.html" target="_blank" rel="noopener">Open Project Overview</a>
+      </article>
+    </section>
   </main>
+
   <footer class="site-footer">
     <div class="container">
       <p>© <span id="year"></span> Dorian A. Diaz • Built on AWS</p>
