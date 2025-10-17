@@ -16,13 +16,13 @@ window.addEventListener('DOMContentLoaded', () => {
   activateTab();
 
   // Fetch visitor count from Lambda API
-  fetch('https://u4s9egb3h5.execute-api.us-east-1.amazonaws.com/prod/visitor-count')
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('visitor-count').textContent = data.count;
-    })
-    .catch(error => {
-      console.error('Error fetching visitor count:', error);
-      document.getElementById('visitor-count').textContent = 'N/A';
-    });
+fetch('https://u4s9egb3h5.execute-api.us-east-1.amazonaws.com/visitor-count')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('visitor-count').textContent = data.count;
+  })
+  .catch(error => {
+    console.error('Error fetching visitor count:', error);
+    document.getElementById('visitor-count').textContent = 'N/A';
+  });
 });
