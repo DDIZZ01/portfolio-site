@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Overview | Serverless Static Website with Visitor Counter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Preload diagram from the 'assests' folder -->
+  <link rel="preload" href="assests/architecture-visitor-counter.png" as="image">
+  <style>
+    .crumb { margin-bottom: 12px; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .section + .section { margin-top: 18px; }
+    .two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 880px){ .two-col { grid-template-columns: 1fr 1fr; } }
+    .kbd { background:#0b1222; padding:2px 6px; border:1px solid #16243f; border-radius:6px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <span class="logo">DD</span>
+        <div>
+          <h1>Project Overview</h1>
+          <p>Serverless Static Website with Visitor Counter</p>
+          <p class="crumb"><a href="index.html#projects">← Back to Projects</a></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h2>Overview</h2>
+      <p>
+        This project demonstrates a full-stack, serverless web application deployed entirely on AWS.
+        It includes a static frontend hosted on S3, a custom domain with HTTPS via CloudFront and Route&nbsp;53,
+        and a backend visitor counter powered by Lambda, DynamoDB, and API&nbsp;Gateway. The system is secured with IAM
+        roles and Origin Access Control, monitored via CloudWatch, and deployed automatically using a CI/CD pipeline with GitHub Actions.
+      </p>
+    </section>
+
+    <section class="card section">
+      <h2>Frontend Hosting and Delivery</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon S3</h3>
+          <ul class="list">
+            <li>Hosted static assets including HTML, CSS, and JavaScript.</li>
+            <li>Configured for static website hosting with <span class="mono">index.html</span> as the root object.</li>
+            <li>Public access blocked; content served securely via CloudFront.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Amazon CloudFront</h3>
+          <ul class="list">
+            <li>Global CDN for low-latency delivery.</li>
+            <li>Origin Access Control (OAC) restricts direct S3 access.</li>
+            <li>HTTPS enforced with ACM certificate; caching & compression enabled.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:8px;">
+        <div>
+          <h3>Amazon Route 53</h3>
+          <ul class="list">
+            <li>Managed DNS for <span class="mono">dorian-a-diaz.click</span>.</li>
+            <li>Alias A record points to CloudFront.</li>
+            <li>Used for DNS validation during ACM provisioning.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>AWS Certificate Manager (ACM)</h3>
+          <ul class="list">
+            <li>Public SSL certificate for <span class="mono">dorian-a-diaz.click</span>.</li>
+            <li>Validated via DNS using Route&nbsp;53.</li>
+            <li>Attached to CloudFront for secure HTTPS delivery.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section">
+      <h2>Backend Visitor Counter</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon DynamoDB</h3>
+          <ul class="list">
+            <li>Table with primary key <span class="mono">id</span> to track visitor counts.</li>
+            <li>Atomic increments via UpdateCommand.</li>
+            <li>On-demand capacity for automatic scaling.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>AWS Lambda</h3>
+          <ul class="list">
+            <li><strong>VisitorCountHandler</strong>: increments and returns count with CORS headers.</li>
+            <li><strong>VisitorCountPreflightHandler</strong>: handles CORS preflight <span class="mono">OPTIONS</span>.</li>
+            <li>Node.js runtime; packaged & deployed with AWS CLI.</li>
+          </ul>
+        </div>
+      </div>
+      <h3 style="margin-top:10px;">API Gateway (HTTP API v2)</h3>
+      <ul class="list">
+        <li>Endpoint <span class="mono">/visitor-count</span> using Lambda proxy integration.</li>
+        <li>CORS configured; dedicated <span class="mono">OPTIONS</span> route to preflight Lambda.</li>
+      </ul>
+    </section>
+
+    <section class="card section">
+      <h2>Security and Permissions</h2>
+      <ul class="list">
+        <li><strong>IAM Roles</strong>: Lambda roles with <span class="mono">AWSLambdaBasicExecutionRole</span>; DynamoDB permissions scoped to table.</li>
+        <li><strong>Invoke Permissions</strong>: API Gateway explicitly allowed to invoke both Lambdas.</li>
+        <li><strong>Encryption</strong>: S3 and DynamoDB encrypted (AWS-managed keys); OAC + ACM enforce secure access.</li>
+      </ul>
+    </section>
+
+    <section class="card section">
+      <h2>Monitoring and Logging</h2>
+      <ul class="list">
+        <li>CloudWatch Logs enabled for both Lambdas.</li>
+        <li>Console logs trace incoming requests, DynamoDB updates, and errors.</li>
+        <li>Alarms can notify on errors, latency, or invocation spikes.</li>
+      </ul>
+    </section>
+
+    <section class="card section">
+      <h2>Frontend Integration</h2>
+      <p>
+        The site’s JavaScript calls the API Gateway endpoint and updates the DOM with the visitor count. It includes a fallback to display
+        <em>N/A</em> on error and logs responses in the browser console for debugging.
+      </p>
+      <p class="mono">GitHub source: <a href="https://github.com/DDIZZ01/portfolio-site/blob/main/script.js" target="_blank" rel="noopener">DDIZZ01/portfolio-site/script.js</a></p>
+    </section>
+
+    <section class="card section">
+      <h2>CI/CD Pipeline (GitHub Actions)</h2>
+      <ul class="list">
+        <li>Workflow in <span class="mono">.github/workflows/deploy.yml</span> runs on push to <span class="mono">main</span>.</li>
+        <li>Steps: checkout → configure AWS creds (GitHub Secrets) → <span class="mono">aws s3 sync</span> → CloudFront invalidation.</li>
+      </ul>
+      <h3>Secrets Management</h3>
+      <ul class="list">
+        <li><span class="mono">AWS_ACCESS_KEY_ID</span></li>
+        <li><span class="mono">AWS_SECRET_ACCESS_KEY</span></li>
+      </ul>
+      <h3>Benefits</h3>
+      <ul class="list">
+        <li>Automatic deployment on push, cache invalidation for freshness, secure credentials, versioned infra, easy to extend.</li>
+      </ul>
+    </section>
+
+    <!-- Architecture Summary WITH DIAGRAM -->
+    <section class="card section">
+      <h2>Architecture Summary</h2>
+
+      <figure class="diagram">
+        <img
+          src="assests/architecture-visitor-counter.png"
+          alt="Serverless portfolio site architecture: Route 53 → CloudFront (OAC) → S3, API Gateway with CORS and Preflight → Lambda Visitor Counter → DynamoDB; CloudWatch for logs/alarms; IAM & encryption at rest."
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>End-to-end serverless architecture used for the portfolio project.</figcaption>
+      </figure>
+
+      <ol class="list">
+        <li><strong>Frontend Hosting</strong>: Route&nbsp;53 → CloudFront → S3 (OAC), ACM for HTTPS.</li>
+        <li><strong>API Layer</strong>: API Gateway with CORS and dedicated preflight route.</li>
+        <li><strong>Backend Logic</strong>: Lambda updates DynamoDB via atomic operation; returns JSON.</li>
+        <li><strong>Monitoring</strong>: CloudWatch logs/alarms.</li>
+        <li><strong>Security</strong>: IAM least-privilege, encryption at rest, HTTPS in transit.</li>
+      </ol>
+    </section>
+
+    <section class="card section">
+      <h2>Summary of Architecture Flow</h2>
+      <ol class="list">
+        <li>User → Route&nbsp;53 → CloudFront → S3 (static content).</li>
+        <li>Frontend JS sends <span class="mono">OPTIONS</span> then <span class="mono">GET</span> to API Gateway.</li>
+        <li>API Gateway → Preflight Lambda (CORS) → Visitor Counter Lambda.</li>
+        <li>Lambda updates DynamoDB → returns count.</li>
+        <li>CloudWatch logs everything; alarms optional.</li>
+        <li>Security via IAM, encryption, and HTTPS.</li>
+      </ol>
+    </section>
+
+    <section class="card section">
+      <h2>Skills Demonstrated</h2>
+      <ul class="list">
+        <li>Serverless architecture design & secure static hosting</li>
+        <li>CORS troubleshooting and preflight handling</li>
+        <li>IAM role creation and permission scoping</li>
+        <li>DynamoDB atomic updates & Lambda integration</li>
+        <li>Real-time logging and error tracing</li>
+        <li>CI/CD with GitHub Actions and CloudFront invalidations</li>
+        <li>Infrastructure/deploy via AWS CLI</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Dorian A. Diaz • Built on AWS</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
