@@ -135,7 +135,6 @@
         The site’s JavaScript calls the API Gateway endpoint and updates the DOM with the visitor count. It includes a fallback to display
         <em>N/A</em> on error and logs responses in the browser console for debugging.
       </p>
-      <p class="mono">GitHub source: <a href="https://github.com/DDIZZ01/portfolio-site/blob/main/script.js" target="_blank" rel="noopener">DDIZZ01/portfolio-site/script.js</a></p>
     </section>
 
     <section class="card section">
@@ -143,6 +142,7 @@
       <ul class="list">
         <li>Workflow in <span class="mono">.github/workflows/deploy.yml</span> runs on push to <span class="mono">main</span>.</li>
         <li>Steps: checkout → configure AWS creds (GitHub Secrets) → <span class="mono">aws s3 sync</span> → CloudFront invalidation.</li>
+         <p class="mono">GitHub source: <a href="https://github.com/DDIZZ01/portfolio-site" target="_blank" rel="noopener">DDIZZ01/portfolio-site</a></p>
       </ul>
       <h3>Secrets Management</h3>
       <ul class="list">
@@ -215,3 +215,4 @@
   </script>
 </body>
 </html>
+
