@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('main section').forEach(sec => sec.style.display = 'none');
   activateTab();
 
- fetch('https://u4s9egb3h5.execute-api.us-east-1.amazonaws.com/prod/visitor-count')
+ fetch('https://5xz3hoi051.execute-api.us-east-1.amazonaws.com/visitor-count')
   .then(response => response.json())
   .then(data => {
     console.log('Visitor count response:', data); // Add this line
