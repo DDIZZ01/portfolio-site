@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Overview | Cybersecurity Threat Detection with SageMaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Preload diagram (put the PNG at /assets/sagemaker-threat-architecture.png) -->
+  <link rel="preload" href="assets/sagemaker-threat-architecture.png" as="image">
+  <style>
+    .crumb { margin-bottom: 12px; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .section + .section { margin-top: 18px; }
+    .two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 880px){ .two-col { grid-template-columns: 1fr 1fr; } }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <span class="logo">DD</span>
+        <div>
+          <h1>Project Overview</h1>
+          <p>Cybersecurity Threat Detection System with Amazon SageMaker</p>
+          <p class="crumb"><a href="index.html#projects">← Back to Projects</a></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Overview -->
+    <section class="card section">
+      <h2>Overview</h2>
+      <p>
+        This project showcases a serverless, machine learning-powered cybersecurity solution deployed entirely on AWS.
+        It detects anomalous network activity, such as DDoS attacks, unauthorized access, and phishing attempts using a
+        trained model hosted on SageMaker. The system automates data ingestion, preprocessing, model training,
+        deployment, and real-time inference. It is secured with IAM policies, monitored via CloudWatch, and designed
+        for scalability and automation.
+      </p>
+    </section>
+
+    <!-- Data Storage and Management -->
+    <section class="card section">
+      <h2>Data Storage and Management</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon S3</h3>
+          <ul class="list">
+            <li>Stores raw network traffic logs collected from various sources.</li>
+            <li>Holds preprocessed datasets and extracted features used for training.</li>
+            <li>Archives model artifacts including training outputs and serialized models.</li>
+            <li>Bucket access tightly controlled via IAM and used as input/output for SageMaker and Lambda.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Machine Learning Pipeline -->
+    <section class="card section">
+      <h2>Machine Learning Pipeline</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon SageMaker</h3>
+          <ul class="list">
+            <li>Trains an <span class="mono">XGBoost</span> model to classify network activity as normal or malicious.</li>
+            <li>Deploys the trained model as a real-time inference endpoint.</li>
+            <li>Automates the ML lifecycle with SageMaker Pipelines:
+              <ul>
+                <li>Data preprocessing</li>
+                <li>Feature engineering</li>
+                <li>Model training</li>
+                <li>Evaluation</li>
+                <li>Deployment</li>
+              </ul>
+            </li>
+            <li>Endpoint is integrated with Lambda for real-time threat detection.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Preprocessing and Feature Engineering -->
+    <section class="card section">
+      <h2>Data Preprocessing and Feature Engineering</h2>
+      <div class="two-col">
+        <div>
+          <h3>AWS Lambda</h3>
+          <ul class="list">
+            <li>Triggered to process raw logs stored in S3.</li>
+            <li>Extracts features such as IP entropy, packet size variance, and protocol usage.</li>
+            <li>Outputs structured datasets back to S3 for SageMaker ingestion.</li>
+            <li>Configured with IAM roles for secure access to S3 and SageMaker.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Monitoring and Logging -->
+    <section class="card section">
+      <h2>Monitoring and Logging</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon CloudWatch</h3>
+          <ul class="list">
+            <li>Captures logs from Lambda preprocessing and SageMaker inference.</li>
+            <li>Tracks performance metrics such as latency, invocation count, and error rates.</li>
+            <li>Extensible with CloudWatch Alarms to notify on anomalies or failures.</li>
+            <li>Logs include flagged threats and prediction confidence scores.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security and Permissions -->
+    <section class="card section">
+      <h2>Security and Permissions</h2>
+      <div class="two-col">
+        <div>
+          <h3>AWS IAM</h3>
+          <ul class="list">
+            <li>IAM roles scoped for least privilege:</li>
+            <li class="mono">Lambda</li>
+            <ul class="list">
+              <li>Execution role with access to S3 and SageMaker.</li>
+            </ul>
+            <li class="mono">SageMaker</li>
+            <ul class="list">
+              <li>Role with access to training data and model artifacts.</li>
+            </ul>
+            <li>Policies enforce encryption at rest and in transit.</li>
+            <li>All services interact securely via IAM-authenticated API calls.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Summary WITH DIAGRAM -->
+    <section class="card section">
+      <h2>Architecture Summary</h2>
+
+      <figure class="diagram">
+        <img
+          src="assests/architecture-threat.png"
+          alt="Architecture: S3 stores raw/preprocessed data & artifacts; Lambda preprocesses & extracts features; SageMaker trains XGBoost, deploys real-time endpoint; CloudWatch collects logs/metrics; IAM manages least-privilege access."
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>Secure, scalable threat detection architecture with SageMaker, Lambda, S3, CloudWatch, and IAM.</figcaption>
+      </figure>
+
+      <ol class="list">
+        <li><strong>Storage – Amazon S3</strong>: Raw logs, preprocessed datasets, model artifacts; IO for Lambda/SageMaker.</li>
+        <li><strong>Compute – AWS Lambda</strong>: Automates preprocessing & feature extraction; orchestrates IO.</li>
+        <li><strong>Machine Learning – Amazon SageMaker</strong>: Trains & deploys model; manages lifecycle with Pipelines.</li>
+        <li><strong>Monitoring – Amazon CloudWatch</strong>: Logs/metrics; alarms for anomalies.</li>
+        <li><strong>Security – AWS IAM</strong>: Least-privilege access; encryption at rest/in transit.</li>
+      </ol>
+    </section>
+
+    <!-- Architecture Flow -->
+    <section class="card section">
+      <h2>Summary of Architecture Flow</h2>
+      <ol class="list">
+        <li>Raw logs are uploaded to S3.</li>
+        <li>Lambda is triggered to preprocess data and extract features.</li>
+        <li>Preprocessed data is stored back in S3 and fed into SageMaker for training.</li>
+        <li>Trained model is deployed as a SageMaker endpoint.</li>
+        <li>Inference requests are sent to the endpoint via Lambda or other triggers.</li>
+        <li>CloudWatch logs all activity and monitors for anomalies.</li>
+        <li>IAM roles enforce secure access across all services.</li>
+      </ol>
+    </section>
+
+    <!-- Skills Demonstrated -->
+    <section class="card section">
+      <h2>Skills Demonstrated</h2>
+      <ul class="list">
+        <li>End-to-end ML pipeline automation with SageMaker Pipelines</li>
+        <li>Feature engineering and preprocessing with Lambda</li>
+        <li>Secure data handling and encryption via IAM</li>
+        <li>Real-time inference and logging with CloudWatch</li>
+        <li>Scalable, serverless architecture design</li>
+        <li>Threat detection modeling with XGBoost</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Dorian A. Diaz • Built on AWS</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
