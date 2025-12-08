@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Overview | Proposal Compliance Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Preload diagram -->
+  <link rel="preload" href="assests/architecture-app-tool.png" as="image">
+  <style>
+    .crumb { margin-bottom: 12px; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .section + .section { margin-top: 18px; }
+    .two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 880px){ .two-col { grid-template-columns: 1fr 1fr; } }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <span class="logo">DD</span>
+        <div>
+          <h1>Project Overview</h1>
+          <p>Proposal Compliance Tool – Secure ECS Fargate Application</p>
+          <p class="crumb"><a href="index.html#projects">← Back to Projects</a></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Overview -->
+    <section class="card section">
+      <h2>Overview</h2>
+      <p>
+        The Proposal Compliance Tool is an internal, secure web application that allows authorized employees to upload proposals, RFPs, and other business development artifacts.
+        It runs an automated compliance pipeline and returns downloadable result artifacts (CSV/JSON/ZIP) via pre-signed links.
+        The application is containerized with Streamlit, deployed on ECS Fargate, and integrated with Route 53, ALB, Cognito, S3, and GitHub Actions for CI/CD.
+      </p>
+    </section>
+
+    <!-- Networking / Entry -->
+    <section class="card section">
+      <h2>Networking / Entry</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon Route 53</h3>
+          <ul class="list">
+            <li>Hosts public domain (e.g., compliance-check-bcsa.com).</li>
+            <li>Alias records point to ALB DNS.</li>
+          </ul>
+          <h3>Application Load Balancer (ALB)</h3>
+          <ul class="list">
+            <li>Terminates TLS with ACM certificate.</li>
+            <li>Enforces Cognito authentication via Hosted UI.</li>
+            <li>Routes authorized traffic to ECS Fargate tasks.</li>
+          </ul>
+          <h3>AWS Certificate Manager (ACM)</h3>
+          <ul class="list">
+            <li>Issues managed TLS certificates for HTTPS.</li>
+          </ul>
+          <h3>VPC & Gateways</h3>
+          <ul class="list">
+            <li>2 public subnets for ALB, 2 private subnets for ECS tasks.</li>
+            <li>Internet Gateway for ALB; NAT Gateway for ECS tasks to reach ECR/pip downloads.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compute / Containers -->
+    <section class="card section">
+      <h2>Compute / Containers</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon ECS (Fargate)</h3>
+          <ul class="list">
+            <li>Runs Streamlit container without EC2 management.</li>
+            <li>Cluster groups tasks (e.g., proposal-grader-cluster1).</li>
+            <li>Task Definition specifies CPU/memory, image, env vars, log driver.</li>
+            <li>Service maintains desired task count and integrates with ALB Target Group.</li>
+          </ul>
+          <h3>Amazon ECR</h3>
+          <ul class="list">
+            <li>Secure Docker registry for ECS images.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Identity / Authentication -->
+    <section class="card section">
+      <h2>Identity / Authentication</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon Cognito</h3>
+          <ul class="list">
+            <li>User Pool + App Client provides Hosted UI and OIDC tokens.</li>
+            <li>ALB listener rule enforces authentication before requests reach the app.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Storage / Artifacts -->
+    <section class="card section">
+      <h2>Storage / Artifacts</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon S3</h3>
+          <ul class="list">
+            <li>Stores CSV/JSON/ZIP outputs from grading pipeline.</li>
+            <li>App generates pre-signed URLs for user downloads.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Observability / Operations -->
+    <section class="card section">
+      <h2>Observability / Operations</h2>
+      <div class="two-col">
+        <div>
+          <h3>Amazon CloudWatch</h3>
+          <ul class="list">
+            <li>Centralized logs from ECS tasks (/ecs/proposal-grader).</li>
+            <li>Supports debugging and monitoring.</li>
+          </ul>
+          <h3>Application Auto Scaling</h3>
+          <ul class="list">
+            <li>Schedules scale up during business hours, scale down off-hours.</li>
+            <li>Optional target tracking or step scaling on CPU/memory/ALB metrics.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CI/CD & Security -->
+    <section class="card section">
+      <h2>CI/CD & Security</h2>
+      <div class="two-col">
+        <div>
+          <h3>GitHub Actions</h3>
+          <ul class="list">
+            <li>Builds and pushes Docker images to ECR.</li>
+            <li>Updates ECS Service via OIDC-assumed IAM role.</li>
+          </ul>
+          <h3>AWS IAM</h3>
+          <ul class="list">
+            <li><span class="mono">ecsTaskExecutionRole</span>: ECS pulls images, writes logs, fetches secrets.</li>
+            <li><span class="mono">Task Role</span>: Runtime permissions for S3 bucket access.</li>
+            <li><span class="mono">GitHub OIDC Deploy Role</span>: Secure CI/CD without long-lived keys.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Summary WITH DIAGRAM -->
+    <section class="card section">
+      <h2>Architecture Summary</h2>
+      <figure class="diagram">
+        <img
+          src="assests/architecture-app-tool.png"
+          alt="Architecture: Route 53 → ALB (TLS termination, Cognito auth) → ECS Fargate (Streamlit app) → S3 (artifacts); GitHub Actions CI/CD; CloudWatch logs; IAM least privilege."
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>Secure, scalable proposal compliance architecture with Route 53, ALB, ECS Fargate, Cognito, S3, CloudWatch, and IAM.</figcaption>
+      </figure>
+      <ol class="list">
+        <li><strong>Networking – Route 53, ALB, ACM, VPC</strong>: DNS, TLS termination, authentication, subnet isolation.</li>
+        <li><strong>Compute – ECS Fargate</strong>: Runs Streamlit containerized app.</li>
+        <li><strong>Storage – Amazon S3</strong>: Durable artifact storage with pre-signed URLs.</li>
+        <li><strong>Authentication – Cognito</strong>: Hosted UI, OIDC tokens, enforced at ALB.</li>
+        <li><strong>CI/CD – GitHub Actions</strong>: Builds/pushes images, updates ECS service.</li>
+        <li><strong>Monitoring – CloudWatch</strong>: Logs, alarms, scaling metrics.</li>
+        <li><strong>Security – IAM</strong>: Least-privilege roles for ECS, S3, CI/CD.</li>
+      </ol>
+    </section>
+
+    <!-- Summary of Architecture Flow -->
+    <section class="card section">
+      <h2>Summary of Architecture Flow</h2>
+      <ol class="list">
+        <li><strong>DNS & entry</strong>: Employee visits Route 53 domain (HTTPS) and hits the ALB listener.</li>
+        <li><strong>Auth at the edge</strong>: ALB evaluates rules; unauthenticated users are redirected to Cognito Hosted UI.</li>
+        <li><strong>Session & routing</strong>: After sign-in, ALB establishes session and forwards to the Target Group (HTTP:8501).</li>
+        <li><strong>App service</strong>: ECS Fargate serves the Streamlit app from private subnets.</li>
+        <li><strong>Artifacts</strong>: On completion, the app uploads CSV/JSON/ZIP outputs to S3 and returns pre-signed URLs.</li>
+        <li><strong>Observability</strong>: Container logs go to CloudWatch; scaling via Application Auto Scaling and optional Alarms.</li>
+        <li><strong>CI/CD</strong>: GitHub Actions (OIDC) builds/pushes to ECR, updates ECS Service, and rolls tasks behind ALB health checks.</li>
+      </ol>
+    </section>
+
+    <!-- Skills Demonstrated -->
+    <section class="card section">
+      <h2>Skills Demonstrated</h2>
+      <ul class="list">
+        <li>Design and deployment of containerized applications with Amazon ECS Fargate</li>
+        <li>Edge authentication using ALB + Amazon Cognito Hosted UI (OIDC)</li>
+        <li>CI/CD automation with GitHub Actions and OIDC role assumption to AWS</li>
+        <li>Artifact management with Amazon S3 and secure distribution via pre-signed URLs</li>
+        <li>Networking and security design with Route 53, ACM, VPC, NAT Gateway, and Security Groups</li>
+        <li>Operational monitoring and scaling using CloudWatch Logs, Alarms, and Application Auto Scaling</li>
+        <li>IAM least-privilege role design for ECS tasks, execution, and CI/CD deploy pipelines</li>
+        <li>Streamlit application containerization and deployment in isolated private subnets</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Dorian A. Diaz • Built on AWS</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
